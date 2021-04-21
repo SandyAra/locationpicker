@@ -161,6 +161,7 @@ class PlacePickerState extends State<PlacePicker> {
     return Scaffold(
       appBar: AppBar(
         key: this.appBarKey,
+        backgroundColor: Colors.white,
         title: SearchInput((it) {
           searchPlace(it);
         }),
