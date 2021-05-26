@@ -325,7 +325,7 @@ class PlacePickerState extends State<PlacePicker> {
       endpoint += "&location=${this.locationResult.latLng.latitude}," +
           "${this.locationResult.latLng.longitude}";
     }
-    http.get(endpoint).then((response) {
+    http.get(Uri.parse(endpoint)).then((response) {
       if (response.statusCode == 200) {
         Map<String, dynamic> data = jsonDecode(response.body);
         List<dynamic> predictions = data['predictions'];
@@ -372,7 +372,7 @@ class PlacePickerState extends State<PlacePicker> {
         "https://maps.googleapis.com/maps/api/place/details/json?key=${widget.apiKey}" +
             "&placeid=$placeId";
 
-    http.get(endpoint).then((response) {
+    http.get(Uri.parse(endpoint)).then((response) {
       if (response.statusCode == 200) {
         Map<String, dynamic> location =
             jsonDecode(response.body)['result']['geometry']['location'];
@@ -449,10 +449,13 @@ class PlacePickerState extends State<PlacePicker> {
 
   /// Fetches and updates the nearby places to the provided lat,lng
   void getNearbyPlaces(LatLng latLng) {
+
+    Uri endpoint = Uri.parse("https://maps.googleapis.com/maps/api/place/nearbysearch/json?" +
+        "key=${widget.apiKey}&" +
+        "location=${latLng.latitude},${latLng.longitude}&radius=150");
+
     http
-        .get("https://maps.googleapis.com/maps/api/place/nearbysearch/json?" +
-            "key=${widget.apiKey}&" +
-            "location=${latLng.latitude},${latLng.longitude}&radius=150")
+        .get(endpoint)
         .then((response) {
       if (response.statusCode == 200) {
         this.nearbyPlaces.clear();
@@ -484,10 +487,11 @@ class PlacePickerState extends State<PlacePicker> {
   /// This method gets the human readable name of the location. Mostly appears
   /// to be the road name and the locality.
   void reverseGeocodeLatLng(LatLng latLng) {
+    Uri uri = Uri.parse("https://maps.googleapis.com/maps/api/geocode/json?" +
+        "latlng=${latLng.latitude},${latLng.longitude}&" +
+        "key=${widget.apiKey}");
     http
-        .get("https://maps.googleapis.com/maps/api/geocode/json?" +
-            "latlng=${latLng.latitude},${latLng.longitude}&" +
-            "key=${widget.apiKey}")
+        .get(uri)
         .then((response) {
       if (response.statusCode == 200) {
         Map<String, dynamic> responseJson = jsonDecode(response.body);
